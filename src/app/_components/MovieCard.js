@@ -17,11 +17,11 @@ export const MovieCard = (props) => {
         height={340}
         className="object-cover rounded-md"
       />
-      <div className="w-[213px] h-[56px] p-2 bg-white dark:bg-gray-800 rounded-md shadow-md mt-2">
-        <p className="text-sm font-medium text-black dark:text-white">
+      <div className="w-[213px] h-[56px] p-2 bg-card text-card-foreground rounded-md shadow-md mt-2 border border-border">
+        <p className="text-sm font-medium">
           ⭐️ {rating}/10
         </p>
-        <p className="text-base font-semibold text-black dark:text-white">
+        <p className="text-base font-semibold">
           {title}
         </p>
       </div>

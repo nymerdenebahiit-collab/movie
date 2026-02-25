@@ -32,11 +32,11 @@ export default function Ger({ type }) {
   console.log(moviesData);
   const router = useRouter();
   return (
-    <div>
+    <div className="bg-background text-foreground min-h-screen">
       <Header />
       <div className="pt-[52px] pl-[80px] pr-[80px]">
         <div className="flex justify-between items-center mb-4">
-          <p className="text-[24px] font-semibold not-italic text-black dark:text-white">
+          <p className="text-[24px] font-semibold not-italic text-foreground">
             Upcoming
           </p>
         </div>

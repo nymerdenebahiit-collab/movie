@@ -5,7 +5,6 @@ import { Footer } from "../../_features/Footer";
 import Header from "../../_features/Header";
 import { useParams } from "next/navigation";
 import MovieD from "@/app/_components/MovieD";
-import { Searchfliter } from "@/app/_components/Searchfliter";
 
 const BASE_URL = "https://api.themoviedb.org/3";
 const TOKEN =
@@ -14,16 +13,31 @@ const TOKEN =
 export default function Page() {
   const { id } = useParams();
   const [detailData, setDetailData] = useState(null);
+  const [trailerKey, setTrailerKey] = useState(null);
 
   async function getData() {
-    const response = await fetch(`${BASE_URL}/movie/${id}?language=en-US`, {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    setDetailData(data);
+    const headers = {
+      Authorization: `Bearer ${TOKEN}`,
+      "Content-Type": "application/json",
+    };
+
+    const [detailResponse, videosResponse] = await Promise.all([
+      fetch(`${BASE_URL}/movie/${id}?language=en-US`, { headers }),
+      fetch(`${BASE_URL}/movie/${id}/videos?language=en-US`, { headers }),
+    ]);
+
+    const detail = await detailResponse.json();
+    const videos = await videosResponse.json();
+    const trailer =
+      videos?.results?.find(
+        (video) => video.site === "YouTube" && video.type === "Trailer"
+      ) ||
+      videos?.results?.find(
+        (video) => video.site === "YouTube" && video.type === "Teaser"
+      );
+
+    setDetailData(detail);
+    setTrailerKey(trailer?.key || null);
   }
 
   useEffect(() => {
@@ -32,10 +46,10 @@ export default function Page() {
   }, [id]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      {detailData && <MovieD movie={detailData} />}
+      {detailData && <MovieD movie={detailData} trailerKey={trailerKey} />}
 
       <Footer />
     </div>

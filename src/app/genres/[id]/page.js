@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import Header from "@/app/_features/Header";
 import { Footer } from "@/app/_features/Footer";
 
@@ -11,10 +12,18 @@ const TOKEN =
   "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxMjI5ZmNiMGRmZTNkMzc2MWFmOWM0YjFjYmEyZTg1NiIsIm5iZiI6MTc1OTcxMTIyNy43OTAwMDAyLCJzdWIiOiI2OGUzMGZmYjFlN2Y3MjAxYjI5Y2FiYmIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.M0DQ3rCdsWnMw8U-8g5yGXx-Ga00Jp3p11eRyiSxCuY";
 
 export default function Searchfliter() {
+  const { id } = useParams();
+  const selectedId = Number(id);
   const [genres, setGenres] = useState([]);
-  const [selected, setSelected] = useState([16, 35]); // Animation + Comedy
+  const [selected, setSelected] = useState([]);
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    if (!Number.isFinite(selectedId)) return;
+    setPage(1);
+    setSelected([selectedId]);
+  }, [selectedId]);
 
   // 🎭 Genre list
   useEffect(() => {
@@ -29,6 +38,11 @@ export default function Searchfliter() {
 
   // 🎬 Movies by genre
   useEffect(() => {
+    if (selected.length === 0) {
+      setMovies([]);
+      return;
+    }
+
     fetch(
       `${BASE_URL}/discover/movie?with_genres=${selected.join(
         ","
@@ -52,7 +66,7 @@ export default function Searchfliter() {
   };
 
   return (
-    <div>
+    <div className="bg-background text-foreground min-h-screen">
       <Header />
       <div className="max-w-[1400px] mx-auto flex gap-6 mt-6">
         {/* LEFT FILTER */}
@@ -67,8 +81,8 @@ export default function Searchfliter() {
                 className={`px-3 py-1.5 text-sm rounded-full border
                 ${
                   selected.includes(genre.id)
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "hover:bg-muted border-border"
                 }`}
               >
                 {genre.name}
@@ -79,7 +93,7 @@ export default function Searchfliter() {
 
         {/* RIGHT CONTENT */}
         <main className="flex-1">
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-muted-foreground mb-4">
             {movies.length} titles in &quot;
             {genres
               .filter((g) => selected.includes(g.id))
@@ -104,7 +118,7 @@ export default function Searchfliter() {
 
                   <h3 className="mt-2 text-sm font-medium">{movie.title}</h3>
 
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     ⭐ {movie.vote_average.toFixed(1)}
                   </p>
                 </div>
@@ -117,7 +131,7 @@ export default function Searchfliter() {
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-40"
+              className="px-3 py-1 border border-border rounded disabled:opacity-40 hover:bg-muted"
             >
               Previous
             </button>
@@ -126,7 +140,7 @@ export default function Searchfliter() {
 
             <button
               onClick={() => setPage((p) => p + 1)}
-              className="px-3 py-1 border rounded"
+              className="px-3 py-1 border border-border rounded hover:bg-muted"
             >
               Next
             </button>

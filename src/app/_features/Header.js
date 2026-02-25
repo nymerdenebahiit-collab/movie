@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Sum } from "../_icon/Sum";
-import { Search } from "../_icon/Search";
 import { Moon } from "../_icon/Moon";
 import { Kino } from "../_icon/Kino";
 import { Sun } from "lucide-react";
@@ -16,7 +15,7 @@ const TOKEN =
   "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxMjI5ZmNiMGRmZTNkMzc2MWFmOWM0YjFjYmEyZTg1NiIsIm5iZiI6MTc1OTcxMTIyNy43OTAwMDAyLCJzdWIiOiI2OGUzMGZmYjFlN2Y3MjAxYjI5Y2FiYmIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.M0DQ3rCdsWnMw8U-8g5yGXx-Ga00Jp3p11eRyiSxCuY";
 
 export default function Header() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
@@ -64,15 +63,16 @@ export default function Header() {
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
-  const isDark = theme === "dark";
+  const isDark = resolvedTheme === "dark";
 
   const handleSearch = () => {
-    if (!value) return;
-    router.push(`/search/${value}`); // 🔹 Search page рүү redirect
+    const keyword = value.trim();
+    if (!keyword) return;
+    router.push(`/search/${encodeURIComponent(keyword)}`); // 🔹 Search page рүү redirect
   };
 
   return (
-    <header className="w-full h-[59px] bg-white dark:bg-black flex justify-center items-center shadow-sm dark:shadow-none border-b border-gray-200 dark:border-gray-800">
+    <header className="w-full h-[59px] bg-background flex justify-center items-center shadow-sm dark:shadow-none border-b border-border">
       <div className="w-[1280px] flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center gap-2 text-[#4338CA] italic text-base font-semibold">
@@ -86,20 +86,20 @@ export default function Header() {
           <div className="relative">
             <button
               onClick={() => setGenreOpen((prev) => !prev)}
-              className="flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="flex items-center gap-2 px-3 py-2 border border-border rounded-md hover:bg-muted transition"
             >
               <Sum />
-              <span className="text-black dark:text-white">Genre</span>
+              <span className="text-foreground">Genre</span>
             </button>
 
             {genreOpen && (
-              <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-3 flex flex-wrap gap-2 z-50">
+              <div className="absolute top-full left-0 mt-2 w-72 bg-background border border-border rounded-lg shadow-lg p-3 flex flex-wrap gap-2 z-50">
                 {genres.map((genre) => (
                   <Link
                     key={genre.id}
                     href={`/genres/${genre.id}`}
                     onClick={() => setGenreOpen(false)}
-                    className="px-3 py-1.5 text-sm rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="px-3 py-1.5 text-sm rounded-full border border-border hover:bg-muted"
                   >
                     {genre.name}
                   </Link>
@@ -109,12 +109,12 @@ export default function Header() {
           </div>
 
           {/* Search */}
-          <div className="flex items-center border border-black dark:border-gray-700 rounded-md px-2">
+          <div className="flex items-center border border-border rounded-md px-2">
             <input
               type="text"
               value={value} // ✅ State-д холбосон
               onChange={(e) => setValue(e.target.value)}
-              className="w-[300px] h-[36px] text-black dark:text-white bg-transparent px-2 outline-none"
+              className="w-[300px] h-[36px] text-foreground bg-transparent px-2 outline-none"
               placeholder="Search"
               onKeyDown={(e) => e.key === "Enter" && handleSearch()} // Enter дарахад
             />
@@ -127,7 +127,7 @@ export default function Header() {
         {/* Theme Toggle */}
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
-          className="w-[36px] h-[36px] flex justify-center items-center hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition"
+          className="w-[36px] h-[36px] flex justify-center items-center hover:bg-muted rounded-full transition"
         >
           {isDark ? <Sun /> : <Moon />}
         </button>

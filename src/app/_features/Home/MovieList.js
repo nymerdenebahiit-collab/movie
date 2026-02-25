@@ -38,12 +38,12 @@ export function MovieList({ type }) {
   return (
     <div className="pt-[52px] pl-[80px] pr-[80px]">
       <div className="flex flex-row justify-between items-center mb-4">
-        <p className="text-[24px] font-semibold not-italic text-black dark:text-white">
+        <p className="text-[24px] font-semibold not-italic text-foreground">
           {titles[type]}
         </p>
         <button
           onClick={() => router.push("/upcomingSeeMore")}
-          className="flex cursor-pointer items-center justify-center gap-2 w-[130px] h-[40px] text-black dark:text-white rounded-xl hover:text-red-500 transition-all duration-200"
+          className="flex cursor-pointer items-center justify-center gap-2 w-[130px] h-[40px] text-foreground rounded-xl hover:text-red-500 transition-all duration-200"
         >
           <p>See more</p>
           <Sum2 className="w-4 h-4" />
